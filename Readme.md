@@ -9,7 +9,7 @@
 3.1 Побудова графу
     - будуємо граф де факти (A,B,C...) це вершини
     - правила (наприклад B and C implies A) це зєднувальні вершини
-    - ![alt text](https://drive.google.com/file/d/1K1bpT_rP--9My54VHbsGQiM_BahAIQNM/view?usp=sharing)
+    - ![alt text](https://github.com/illyamaltsev/Expert_System/blob/master/example.png)
 4. Розвязання графу
     - ідемо по лісту визначених для нас фактів
         -заходимо в кожне правило , звязане з цим фактом і трансформуємо його відносно знаного факту
