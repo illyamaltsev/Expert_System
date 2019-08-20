@@ -5,6 +5,27 @@ from utils.lexer import lex
 from utils.parser import parse, build_graph
 from utils.drawer import draw_graph
 
+# Global variables
+Rules = {}
+Facts = {}
+
+
+def solve(graph):
+    queue = []
+    for k, v in Facts:
+        if v:
+            queue.append(k)
+
+    while True:
+        try:
+            fact = queue.pop(0)
+        except Exception as e:
+            print(e)
+            break
+        connected_rules = graph.neighbors(fact)
+        for r in connected_rules:
+            res = transform(r, fact)
+
 
 def main(argc, argv):
     filename = 'test.txt'
