@@ -8,6 +8,8 @@ OPERATIONS = {
     '^': 'xor',
     '!': 'not',
     '*': 'implies',
-    '$': 'if and only if'
+    '$': 'if and only if',
+    '(': '(',
+    ')': ')'
 }
 

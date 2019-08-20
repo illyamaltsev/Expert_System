@@ -3,8 +3,8 @@
 Rules = {
     'R1':[
         {
-            "type": "fact",
-            "value": "B"
+            "type": "fact", # "type": bool
+            "value": "B"    # "value": True
         },
         {
             "type": "operation",
@@ -12,7 +12,8 @@ Rules = {
         },
         {
             "type": "fact",
-            "value": "C"
+            "value": "C",
+            "not": True
         },
         {
             "type": "operation",
@@ -23,6 +24,11 @@ Rules = {
             "value": True
         }
     ]
+}
+
+Facts = {
+    'A': True
+    
 }
 
 """
@@ -41,6 +47,36 @@ Rules = {
     }
 """ 
 
-def transform(rule_name: str, fact: dict):
+def check_BRACKETS(rule_name):
+     global Rules
+     lenght = len(Rules[rule_name])
+     for i, r in enumerate(Rules[rule_name]):
+         if i + 2 < lenght and r["value"] == "(" and (Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and Rules[rule_name][i + 2]["value"] == ")":
+             del Rules[rule_name][i]
+             del Rules[rule_name][i + 2]
+             check_BRACKETS(rule_name)
+
+
+def calculate(rule_name):
+    check_BRACKETS(rule_name) #+
+    check_AND(rule_name)
+    check_OR(rule_name)
+    check_XOR(rule_name)
+    check_IMPLIES(rule_name)
+    check_IFANDONLYIF(rule_name)
+    return check_FINAL(rule_name)
+
+
+
+
+def transform(rule_name: str, fact: str):
     global Rules
-    pass
+    global Facts
+    for i, r in enumerate(Rules[rule_name]):
+        if r["value"] == fact:
+            Rules[rule_name][i]["type"] = "bool"
+            if r["not"]:
+                Rules[rule_name][i]["value"] = not Facts[fact]
+            else
+                Rules[rule_name][i]["value"] = Facts[fact]
+    return calculate(rule_name)
