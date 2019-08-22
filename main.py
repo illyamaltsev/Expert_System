@@ -22,9 +22,7 @@ def priority(f):
 
 def solve():
     global Graph
-
     facts = list(Facts.keys())
-
     while len(facts) > 0:
         fact = facts.pop()
         assert Facts[fact] != '?'
@@ -34,7 +32,7 @@ def solve():
             if res:  # if transform solved all rule
                 Graph.remove_node(rule)
         Graph.remove_node(fact)
-        facts.sort(key=lambda f: priority(Facts[f]))
+        facts = sorted(facts, key=lambda f: priority(Facts[f]), reverse=True)
 
 
 def main(argc, argv):
@@ -58,7 +56,6 @@ def main(argc, argv):
     # Result
     for q in question_facts:
         print(q, Facts[q])
-
 
 
 main(len(sys.argv), sys.argv)

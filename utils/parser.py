@@ -47,14 +47,15 @@ def parse(tokens: list):
                 }
                 if v != "not":
                     rule.append(elem)
-                if k is "fact":
-                    facts_in_rule.append(v)
-                    if v not in all_facts:
-                        all_facts.append(v)
+                if k is "fact" or (k is "operation" and v is "("):
                     if i != 0 and tokens[i-1][1] == "not":
                         elem["not"] = True
                     else:
                         elem["not"] = False
+                if k is "fact":
+                    facts_in_rule.append(v)
+                    if v not in all_facts:
+                        all_facts.append(v)
                 i = i + 1
                 k, v = tokens[i]
             graph_body[rule_name] = facts_in_rule  # link from rule to facts
