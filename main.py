@@ -1,40 +1,64 @@
 import sys
+import json
+import networkx as nx
 
 from utils.reader import read_all
 from utils.lexer import lex
-from utils.parser import parse, build_graph
+from utils.parser import parse
 from utils.drawer import draw_graph
+from tranformator import transform
 
 # Global variables
-Rules = {}
-Facts = {}
+Rules = None
+Facts = None
+Graph = None
 
 
-def solve(graph):
-    queue = []
-    for k, v in Facts:
-        if v:
-            queue.append(k)
+def priority(f):
+    if f == '?':
+        return -1
+    return int(f)
 
-    while True:
-        try:
-            fact = queue.pop(0)
-        except Exception as e:
-            print(e)
-            break
-        connected_rules = graph.neighbors(fact)
-        for r in connected_rules:
-            res = transform(r, fact)
+
+def solve():
+    global Graph
+
+    facts = list(Facts.keys())
+
+    while len(facts) > 0:
+        fact = facts.pop()
+        assert Facts[fact] != '?'
+        connected_rules = Graph.neighbors(fact)
+        for rule in connected_rules:
+            res = transform(rule, fact)
+            if res:  # if transform solved all rule
+                Graph.remove_node(rule)
+        Graph.remove_node(fact)
+        facts.sort(key=lambda f: priority(Facts[f]))
 
 
 def main(argc, argv):
+    global Rules
+    global Facts
+    global Graph
     filename = 'test.txt'
     f_content = read_all(filename)
     tokens = lex(f_content)
     parsed = parse(tokens)
+    print(json.dumps(parsed, indent=4))
 
-    graph = build_graph(parsed["graph_body"])
-    draw_graph(graph, parsed["rules"])
+    question_facts = parsed["question_facts"]
+    Rules = parsed["rules"]
+    Facts = parsed["facts"]
+    Graph = nx.Graph(parsed["graph_body"])
+
+    # draw_graph(graph, parsed["rules"])
+    # solve()
+
+    # Result
+    for q in question_facts:
+        print(q, Facts[q])
+
 
 
 main(len(sys.argv), sys.argv)
