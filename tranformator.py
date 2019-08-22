@@ -5,7 +5,7 @@ Rules = {
         {
             "type": "operation",
             "value": "(",
-            "not": True
+            "not": False
         },
         {
             "type": "fact", # "type": bool
@@ -78,7 +78,7 @@ def check_AND(rule_name):
     global Rules
     lenght = len(Rules[rule_name])
     for i, r in enumerate(Rules[rule_name]):
-        if i + 3 < lenght and i > 0 and r["value"] == "and":
+        if i + 1 < lenght and i > 0 and r["value"] == "and":
             ### A AND bool
             if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
                 # A AND True -> A
@@ -134,7 +134,7 @@ def check_OR(rule_name):
     global Rules
     lenght = len(Rules[rule_name])
     for i, r in enumerate(Rules[rule_name]):
-        if i + 3 < lenght and i > 0 and r["value"] == "or":
+        if i + 1 < lenght and i > 0 and r["value"] == "or":
             ### A OR bool
             if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
                 # A OR True -> True
@@ -192,7 +192,7 @@ def check_XOR(rule_name):
     global Rules
     lenght = len(Rules[rule_name])
     for i, r in enumerate(Rules[rule_name]):
-        if i + 3 < lenght and i > 0 and r["value"] == "xor":
+        if i + 1 < lenght and i > 0 and r["value"] == "xor":
             ### A XOR bool
             if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
                 # A XOR True -> !A
@@ -252,8 +252,30 @@ def check_XOR(rule_name):
                 check_XOR(rule_name)
 
 def check_IMPLIES(rule_name):
-    # ... -> A AND True =>  A = True; A AND True -> True
-    pass
+    global Rules
+    global Facts
+    # ... -> ... but A -> True or False -> A then A = underfit
+    if len(Rules[rule_name]) == 3 and Rules[rule_name][1]["value"] == "implies":
+        # True -> A => A = True
+        if Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][0]["value"] == True and Rules[rule_name][2]["type"] = "fact":
+            # A => True
+            if !Rules[rule_name][2]["not"]:
+                Facts[Rules[rule_name][2]["value"]] = True
+            # !A => False
+            else:
+                Facts[Rules[rule_name][2]["value"]] = False
+        # A -> False => A = False
+        if Rules[rule_name][0]["type"] = "fact" and Rules[rule_name][2]["type"] = "bool" and Rules[rule_name][2]["value"] == False:
+            # A => False
+            if !Rules[rule_name][0]["not"]:
+                Facts[Rules[rule_name][0]["value"]] = False
+            # !A => True
+            else:
+                Facts[Rules[rule_name][0]["value"]] = True
+    # bool -> ... and ...
+    elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
+    # ... and ... -> bool
+
 
 def check_IFANDONLYIF(rule_name):
     pass
