@@ -4,7 +4,7 @@ Rules = {
     'R1':[
         {
             "type": "operation",
-            "value": "("
+            "value": "(",
             "not": True
         },
         {
