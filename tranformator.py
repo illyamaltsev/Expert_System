@@ -5,6 +5,7 @@ Rules = {
         {
             "type": "operation",
             "value": "("
+            "not": True
         },
         {
             "type": "fact", # "type": bool
@@ -60,11 +61,18 @@ def check_BRACKETS(rule_name):
      global Rules
      lenght = len(Rules[rule_name])
      for i, r in enumerate(Rules[rule_name]):
-         # (A) -> A or (bool) -> bool
-         if i + 2 < lenght and r["value"] == "(" and (Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and Rules[rule_name][i + 2]["value"] == ")":
-             del Rules[rule_name][i]
-             del Rules[rule_name][i + 1]
-             check_BRACKETS(rule_name)
+        # (A) -> A or (bool) -> bool
+        if i + 2 < lenght and r["value"] == "(" and (Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and Rules[rule_name][i + 2]["value"] == ")":
+            # !(...) -> !...
+            if Rules[rule_name][i]["not"]:
+                # !(A) -> !A
+                if Rules[rule_name][i + 1]["type"] == "fact":
+                    Rules[rule_name][i + 1]["not"] = not Rules[rule_name][i + 1]["not"]
+                else:
+                    Rules[rule_name][i + 1]["value"] = not Rules[rule_name][i + 1]["value"]
+            del Rules[rule_name][i]
+            del Rules[rule_name][i + 1]
+            check_BRACKETS(rule_name)
 
 def check_AND(rule_name):
     global Rules
