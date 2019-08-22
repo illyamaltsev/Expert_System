@@ -273,12 +273,31 @@ def check_IMPLIES(rule_name):
             else:
                 Facts[Rules[rule_name][0]["value"]] = True
     # bool -> ... and ...
-    elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
+    #elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
     # ... and ... -> bool
 
 
 def check_IFANDONLYIF(rule_name):
-    pass
+    global Rules
+    global Facts
+    # ... <-> ...
+    if len(Rules[rule_name]) == 3 and Rules[rule_name][1]["value"] == "if and only if":
+        # bool <-> A => A = bool
+        if Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][2]["type"] = "fact":
+            # A => bool
+            if !Rules[rule_name][2]["not"]:
+                Facts[Rules[rule_name][2]["value"]] = Rules[rule_name][0]["value"]
+            # !A => !bool
+            else:
+                Facts[Rules[rule_name][2]["value"]] = not Rules[rule_name][0]["value"]
+        # A <-> bool => A = bool
+        if Rules[rule_name][0]["type"] = "fact" and Rules[rule_name][2]["type"] = "bool":
+            # A => bool
+            if !Rules[rule_name][0]["not"]:
+                Facts[Rules[rule_name][0]["value"]] = Rules[rule_name][2]["value"]
+            # !A => !bool
+            else:
+                Facts[Rules[rule_name][0]["value"]] = not Rules[rule_name][2]["value"]
 
 def check_FINAL(rule_name):
     pass
