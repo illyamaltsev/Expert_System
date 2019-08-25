@@ -12,6 +12,7 @@ from tranformator import transform
 
 # Global variables
 
+visual = False
 
 def priority(f):
     if f == '?':
@@ -30,7 +31,8 @@ def solve():
             return
         connected_rules = list(config.Graph.neighbors(fact))
         for rule in connected_rules:
-            draw_graph(fact, rule)
+            if visual:
+                draw_graph(fact, rule)
             res = transform(rule, fact)
             config.Graph.remove_edge(fact, rule)
             if res:  # if transform solved all rule
@@ -40,8 +42,14 @@ def solve():
 
 
 def main(argc, argv):
-    filename = 'tests.txt'
-    f_content = read_all(filename)
+    global visual
+    if "-v" in argv:
+        visual = True
+    try:
+        f_content = read_all(argv[argv.index("-f") + 1])
+    except:
+        print("Usage: python main.py [-v] -f file_name")
+        exit()
     tokens = lex(f_content)
     parsed = parse(tokens)
     # print(json.dumps(parsed, indent=4))
@@ -54,9 +62,11 @@ def main(argc, argv):
     config.init(Rules, Facts, Graph)
 
     init_pos()
-    draw_graph()
+    if visual:
+        draw_graph()
     solve()
-    draw_graph()
+    if visual:
+        draw_graph()
 
     # Result
     for q in question_facts:
