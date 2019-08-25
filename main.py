@@ -23,7 +23,6 @@ def priority(f):
 
 
 def solve():
-    global visual
     facts = list(config.Facts.keys())
     facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
     while len(facts) > 0:
