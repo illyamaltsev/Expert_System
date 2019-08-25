@@ -33,11 +33,16 @@ def draw_graph(fact=None, rule_name=None):
     for k in config.Rules.keys():
         text += k + ": "
         for elem in config.Rules[k]:
+            try:
+                if elem["not"]:
+                    text += "not "
+            except:
+                print("")
             text += str(elem["value"]) + " "
         text += '\n'
 
     text += "step: " + str(step)
-    globals()["step"]+=1
+    globals()["step"] += 1
 
     pos_labels = {}
     for node, coords in pos_nodes.items():
