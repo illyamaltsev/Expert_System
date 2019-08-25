@@ -52,6 +52,8 @@ def solve():
         fact = facts.pop(0)
         if config.Facts[fact] == '?':
             return
+        if config.Facts[fact] == None:
+            config.Facts[fact] = False
         connected_rules = list(config.Graph.neighbors(fact))
         for rule in connected_rules:
             if visual:
