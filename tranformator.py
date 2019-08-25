@@ -1,6 +1,8 @@
 # coding: utf8
 import json
+import config
 
+<<<<<<< HEAD
 Rules = {
     'R1':[
         {
@@ -50,202 +52,212 @@ Facts = {
         "value": False
     }
 """ 
+=======
+>>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
 
 def check_BRACKETS(rule_name):
-     global Rules
-     lenght = len(Rules[rule_name])
-     for i, r in enumerate(Rules[rule_name]):
+    lenght = len(config.Rules[rule_name])
+    for i, r in enumerate(config.Rules[rule_name]):
         # (A) -> A or (bool) -> bool
-        if i + 2 < lenght and r["value"] == "(" and (Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and Rules[rule_name][i + 2]["value"] == ")":
+        if i + 2 < lenght and r["value"] == "(" and (
+                config.Rules[rule_name][i + 1]["type"] == "fact" or config.Rules[rule_name][i + 1]["type"] == "bool") and \
+                config.Rules[rule_name][i + 2]["value"] == ")":
             # !(...) -> !...
-            if Rules[rule_name][i]["not"]:
+            if config.Rules[rule_name][i]["not"]:
                 # !(A) -> !A
-                if Rules[rule_name][i + 1]["type"] == "fact":
-                    Rules[rule_name][i + 1]["not"] = not Rules[rule_name][i + 1]["not"]
+                if config.Rules[rule_name][i + 1]["type"] == "fact":
+                    config.Rules[rule_name][i + 1]["not"] = not config.Rules[rule_name][i + 1]["not"]
                 else:
+<<<<<<< HEAD
                     Rules[rule_name][i + 1]["value"] = not Rules[rule_name][i + 1]["value"]
             # раскрываем скобки удаляя их
             del Rules[rule_name][i]
             del Rules[rule_name][i + 1]
+=======
+                    config.Rules[rule_name][i + 1]["value"] = not config.Rules[rule_name][i + 1]["value"]
+            del config.Rules[rule_name][i]
+            del config.Rules[rule_name][i + 1]
+>>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
             check_BRACKETS(rule_name)
 
+
 def check_AND(rule_name):
-    global Rules
-    lenght = len(Rules[rule_name])
-    for i, r in enumerate(Rules[rule_name]):
+    lenght = len(config.Rules[rule_name])
+    for i, r in enumerate(config.Rules[rule_name]):
         if i + 1 < lenght and i > 0 and r["value"] == "and":
             ### A AND bool
-            if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
+            if config.Rules[rule_name][i - 1]["type"] == "fact" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # A AND True -> A
-                if Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                if config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 # A AND False -> False
                 else:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = False
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
             ### bool AND A
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "fact":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "fact":
                 # True AND A -> A
-                if Rules[rule_name][i - 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                if config.Rules[rule_name][i - 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # False AND A -> False
                 else:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 check_AND(rule_name)
             ### bool AND bool
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "bool":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # True AND True -> True
-                if Rules[rule_name][i - 1]["value"] == Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                if config.Rules[rule_name][i - 1]["value"] == config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # False AND bool -> False or bool AND False -> False
-                if Rules[rule_name][i - 1]["value"] == False or Rules[rule_name][i + 1]["value"] == False:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = False
+                if config.Rules[rule_name][i - 1]["value"] == False or config.Rules[rule_name][i + 1]["value"] == False:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
             ### A and A
-            elif Rules[rule_name][i - 1]["value"] == Rules[rule_name][i + 1]["value"]:
+            elif config.Rules[rule_name][i - 1]["value"] == config.Rules[rule_name][i + 1]["value"]:
                 # A AND A -> A or !A AND !A -> !A
-                if Rules[rule_name][i - 1]["not"] == Rules[rule_name][i + 1]["not"]:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                if config.Rules[rule_name][i - 1]["not"] == config.Rules[rule_name][i + 1]["not"]:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # A AND !A -> False or !A AND A -> False
                 else:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = False
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
 
+
 def check_OR(rule_name):
-    global Rules
-    lenght = len(Rules[rule_name])
-    for i, r in enumerate(Rules[rule_name]):
+    lenght = len(config.Rules[rule_name])
+    for i, r in enumerate(config.Rules[rule_name]):
         if i + 1 < lenght and i > 0 and r["value"] == "or":
             ### A OR bool
-            if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
+            if config.Rules[rule_name][i - 1]["type"] == "fact" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # A OR True -> True
-                if Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                if config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # A OR False -> A
                 else:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 check_OR(rule_name)
             ### bool OR A
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "fact":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "fact":
                 # True OR A -> True
-                if Rules[rule_name][i - 1]["value"] == True:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                if config.Rules[rule_name][i - 1]["value"] == True:
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 # False OR A -> A
                 else:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 check_OR(rule_name)
             ### bool OR bool
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "bool":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # True OR True -> True
-                if Rules[rule_name][i - 1]["value"] == True or Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = True
+                if config.Rules[rule_name][i - 1]["value"] == True or config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = True
                 # False OR bool -> bool
-                elif Rules[rule_name][i - 1]["value"] == False:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                elif config.Rules[rule_name][i - 1]["value"] == False:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # bool OR False -> bool
-                elif Rules[rule_name][i + 1]["value"] == False:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                elif config.Rules[rule_name][i + 1]["value"] == False:
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 check_OR(rule_name)
             ### A OR A
-            elif Rules[rule_name][i - 1]["value"] == Rules[rule_name][i + 1]["value"]:
+            elif config.Rules[rule_name][i - 1]["value"] == config.Rules[rule_name][i + 1]["value"]:
                 # A OR A -> A or !A OR !A -> !A
-                if Rules[rule_name][i - 1]["not"] == Rules[rule_name][i + 1]["not"]:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                if config.Rules[rule_name][i - 1]["not"] == config.Rules[rule_name][i + 1]["not"]:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # A OR !A -> True or !A OR A -> True
                 else:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = True
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
 
+
 def check_XOR(rule_name):
-    global Rules
-    lenght = len(Rules[rule_name])
-    for i, r in enumerate(Rules[rule_name]):
+    lenght = len(config.Rules[rule_name])
+    for i, r in enumerate(config.Rules[rule_name]):
         if i + 1 < lenght and i > 0 and r["value"] == "xor":
             ### A XOR bool
-            if Rules[rule_name][i - 1]["type"] == "fact" and Rules[rule_name][i + 1]["type"] == "bool":
+            if config.Rules[rule_name][i - 1]["type"] == "fact" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # A XOR True -> !A
-                if Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
-                    Rules[rule_name][i - 1]["not"] = not Rules[rule_name][i - 1]["not"]
+                if config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
+                    config.Rules[rule_name][i - 1]["not"] = not config.Rules[rule_name][i - 1]["not"]
 
                 # A XOR False -> A
                 else:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 check_XOR(rule_name)
             ### bool XOR A
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "fact":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "fact":
                 # True XOR A -> !A
-                if Rules[rule_name][i - 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["not"] = not Rules[rule_name][i - 1]["not"]
+                if config.Rules[rule_name][i - 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["not"] = not config.Rules[rule_name][i - 1]["not"]
                 # False XOR A -> A
                 else:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 check_XOR(rule_name)
             ### bool XOR bool
-            elif Rules[rule_name][i - 1]["type"] == "bool" and Rules[rule_name][i + 1]["type"] == "bool":
+            elif config.Rules[rule_name][i - 1]["type"] == "bool" and config.Rules[rule_name][i + 1]["type"] == "bool":
                 # True XOR True -> False
-                if Rules[rule_name][i - 1]["value"] == True and Rules[rule_name][i + 1]["value"] == True:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = False
+                if config.Rules[rule_name][i - 1]["value"] == True and config.Rules[rule_name][i + 1]["value"] == True:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = False
                 # False XOR bool -> bool
-                elif Rules[rule_name][i - 1]["value"] == False:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
+                elif config.Rules[rule_name][i - 1]["value"] == False:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
                 # bool XOR False -> bool
-                elif Rules[rule_name][i + 1]["value"] == False:
-                    del Rules[rule_name][i]
-                    del Rules[rule_name][i]
+                elif config.Rules[rule_name][i + 1]["value"] == False:
+                    del config.Rules[rule_name][i]
+                    del config.Rules[rule_name][i]
                 check_XOR(rule_name)
             ### A XOR A
-            elif Rules[rule_name][i - 1]["value"] == Rules[rule_name][i + 1]["value"]:
+            elif config.Rules[rule_name][i - 1]["value"] == config.Rules[rule_name][i + 1]["value"]:
                 # A XOR A -> False or !A XOR !A -> False
-                if Rules[rule_name][i - 1]["not"] == Rules[rule_name][i + 1]["not"]:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = False
+                if config.Rules[rule_name][i - 1]["not"] == config.Rules[rule_name][i + 1]["not"]:
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = False
                 # A XOR !A -> True or !A XOR A -> True
                 else:
-                    del Rules[rule_name][i - 1]
-                    del Rules[rule_name][i - 1]
-                    Rules[rule_name][i - 1]["type"] = "bool"
-                    Rules[rule_name][i - 1]["value"] = True
+                    del config.Rules[rule_name][i - 1]
+                    del config.Rules[rule_name][i - 1]
+                    config.Rules[rule_name][i - 1]["type"] = "bool"
+                    config.Rules[rule_name][i - 1]["value"] = True
                 check_XOR(rule_name)
 
+<<<<<<< HEAD
 def check_right_part(rule_name):
     global Rules
     global Facts
@@ -283,27 +295,28 @@ def check_left_part(rulename):
         elif rule["type"] == "fact":
             facts_to_change.append({rule["value"]:not rule["not"]})
     
+=======
+>>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
 
 def check_IMPLIES(rule_name):
-    global Rules
-    global Facts
     # ... -> ... but A -> True or False -> A then A = underfit
-    if len(Rules[rule_name]) == 3 and Rules[rule_name][1]["value"] == "implies":
+    if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
-        if Rules[rule_name][0]["type"] == "bool" and Rules[rule_name][0]["value"] == True and Rules[rule_name][2]["type"] == "fact":
+        if config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][0]["value"] == True and config.Rules[rule_name][2]["type"] == "fact":
             # A => True
-            if not Rules[rule_name][2]["not"]:
-                Facts[Rules[rule_name][2]["value"]] = True
+            if not config.Rules[rule_name][2]["not"]:
+                config.Facts[config.Rules[rule_name][2]["value"]] = True
             # !A => False
             else:
-                Facts[Rules[rule_name][2]["value"]] = False
+                config.Facts[config.Rules[rule_name][2]["value"]] = False
         # A -> False => A = False
-        if Rules[rule_name][0]["type"] == "fact" and Rules[rule_name][2]["type"] == "bool" and Rules[rule_name][2]["value"] == False:
+        if config.Rules[rule_name][0]["type"] == "fact" and config.Rules[rule_name][2]["type"] == "bool" and config.Rules[rule_name][2]["value"] == False:
             # A => False
-            if not Rules[rule_name][0]["not"]:
-                Facts[Rules[rule_name][0]["value"]] = False
+            if not config.Rules[rule_name][0]["not"]:
+                config.Facts[config.Rules[rule_name][0]["value"]] = False
             # !A => True
             else:
+<<<<<<< HEAD
                 Facts[Rules[rule_name][0]["value"]] = True
     # True -> ... and ... => right part is True
     elif Rules[rule_name][0]["value"] == True and Rules[rule_name][1]["value"] == "implies":
@@ -317,71 +330,83 @@ def check_IMPLIES(rule_name):
         if is_need_to_change:
             for fact, value in facts_to_change:
                 Facts[fact] = value
+=======
+                config.Facts[config.Rules[rule_name][0]["value"]] = True
+    # bool -> ... and ...
+    # elif config.Rules[rule_name][0]["type"] = "bool" and config.Rules[rule_name][1]["value"] == "implies" and (len(config.Rules[rule_name]) - 3) / 2 ==
+    # ... and ... -> bool
+
+>>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
 
 def check_IFANDONLYIF(rule_name):
-    global Rules
-    global Facts
     # ... <-> ...
-    if len(Rules[rule_name]) == 3 and Rules[rule_name][1]["value"] == "if and only if":
+    if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "if and only if":
         # bool <-> A => A = bool
-        if Rules[rule_name][0]["type"] == "bool" and Rules[rule_name][2]["type"] == "fact":
+        if config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][2]["type"] == "fact":
             # A => bool
-            if not Rules[rule_name][2]["not"]:
-                Facts[Rules[rule_name][2]["value"]] = Rules[rule_name][0]["value"]
+            if not config.Rules[rule_name][2]["not"]:
+                config.Facts[config.Rules[rule_name][2]["value"]] = config.Rules[rule_name][0]["value"]
             # !A => !bool
             else:
-                Facts[Rules[rule_name][2]["value"]] = not Rules[rule_name][0]["value"]
+                config.Facts[config.Rules[rule_name][2]["value"]] = not config.Rules[rule_name][0]["value"]
         # A <-> bool => A = bool
-        if Rules[rule_name][0]["type"] == "fact" and Rules[rule_name][2]["type"] == "bool":
+        if config.Rules[rule_name][0]["type"] == "fact" and config.Rules[rule_name][2]["type"] == "bool":
             # A => bool
-            if not Rules[rule_name][0]["not"]:
-                Facts[Rules[rule_name][0]["value"]] = Rules[rule_name][2]["value"]
+            if not config.Rules[rule_name][0]["not"]:
+                config.Facts[config.Rules[rule_name][0]["value"]] = config.Rules[rule_name][2]["value"]
             # !A => !bool
             else:
-                Facts[Rules[rule_name][0]["value"]] = not Rules[rule_name][2]["value"]
+                config.Facts[config.Rules[rule_name][0]["value"]] = not config.Rules[rule_name][2]["value"]
     # bool <-> ... and ...
-    #elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
+    # elif config.Rules[rule_name][0]["type"] = "bool" and config.Rules[rule_name][1]["value"] == "implies" and (len(config.Rules[rule_name]) - 3) / 2 ==
     # ... and ... <-> bool
 
+
 def check_FINAL(rule_name):
-    global Rules
     # bool -> A or A -> bool
-    if len(Rules[rule_name]) == 3 and (Rules[rule_name][0]["type"] == "bool" or Rules[rule_name][2]["type"] == "bool"):
+    if len(config.Rules[rule_name]) == 3 and (config.Rules[rule_name][0]["type"] == "bool" or config.Rules[rule_name][2]["type"] == "bool"):
         return True
     return False
 
+
 def calculate(rule_name):
-    global Rules
     while True:
-        cur_len = len(Rules)
-        check_BRACKETS(rule_name)       #+
-        check_AND(rule_name)            #+ but only in left side
-        check_OR(rule_name)             #+
-        check_XOR(rule_name)            #+
-        check_IMPLIES(rule_name)        #+-
-        check_IFANDONLYIF(rule_name)    #+-
-        rez = check_FINAL(rule_name)    #+-
-        if cur_len == len(Rules):
+        cur_len = len(config.Rules)
+        check_BRACKETS(rule_name)  # +
+        check_AND(rule_name)  # + but only in left side
+        check_OR(rule_name)  # +
+        check_XOR(rule_name)  # +
+        check_IMPLIES(rule_name)  # +-
+        check_IFANDONLYIF(rule_name)  # +-
+        rez = check_FINAL(rule_name)  # +-
+        if cur_len == len(config.Rules):
+            if rez:
+                del config.Rules[rule_name]
             return rez
 
 
-
-
 def transform(rule_name: str, fact: str):
-    global Rules
-    global Facts
-    for i, r in enumerate(Rules[rule_name]):
+    print(json.dumps(config.Rules, indent=2))
+
+    for i, r in enumerate(config.Rules[rule_name]):
         if r["value"] == fact:
-            Rules[rule_name][i]["type"] = "bool"
+            config.Rules[rule_name][i]["type"] = "bool"
             # !A -> not bool
             if r["not"]:
-                Rules[rule_name][i]["value"] = not Facts[fact]
+                config.Rules[rule_name][i]["value"] = not config.Facts[fact]
             # A -> bool
             else:
-                Rules[rule_name][i]["value"] = Facts[fact]
+                config.Rules[rule_name][i]["value"] = config.Facts[fact]
     return calculate(rule_name)
 
+
+"""
 if __name__ == "__main__":
     print(transform('R1', 'B'))
+<<<<<<< HEAD
     print(json.dumps(Rules, indent=4))
     print(json.dumps(Facts, indent=4))
+=======
+    print(json.dumps(config.Rules, indent=4))
+"""
+>>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
