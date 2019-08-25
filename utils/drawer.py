@@ -8,16 +8,20 @@ def init_pos():
     global pos_nodes
     global step
     step = 0
-    pos_nodes = nx.spring_layout(config.Graph)
+    pos_nodes = nx.spring_layout(config.Graph, seed=1)
 
 
 def draw_graph(fact=None, rule_name=None):
+
     color_map = []
     labels = {}
 
     for node in config.Graph:
         try:
-            labels[node] = str(config.Facts[node])
+            if config.Facts[node]==True or config.Facts[node] == False:
+                labels[node] = str(config.Facts[node])
+            else:
+                labels[node] = ""
         except:
             labels[node] = ""
         if node == fact:
@@ -49,9 +53,10 @@ def draw_graph(fact=None, rule_name=None):
         pos_labels[node] = (coords[0], coords[1] + 0.05)
 
     plt.figure(figsize=(15, 10))
-    plt.title(text)
-    plt.axis('off')
+    plt.title(text, loc="center")
     nx.draw_networkx(config.Graph, pos=pos_nodes,  node_color=color_map)
     nx.draw_networkx_labels(config.Graph, pos_labels, labels=labels)
+    plt.subplots_adjust(left=0.01, right=0.99, bottom=0.01, top=1-(len(config.Rules.keys()) + 1) * 0.02)
     plt.show()
+    plt.close()
 
