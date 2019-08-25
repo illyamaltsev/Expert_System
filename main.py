@@ -36,7 +36,7 @@ def solve():
 
 
 def main(argc, argv):
-    filename = 'test.txt'
+    filename = 'tests.txt'
     f_content = read_all(filename)
     tokens = lex(f_content)
     parsed = parse(tokens)
