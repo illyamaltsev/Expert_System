@@ -252,13 +252,13 @@ def check_IMPLIES(rule_name):
             else:
                 config.Facts[Rules[rule_name][0]["value"]] = True
     # True -> ... and ... => right part is True
-    elif config.Rules[rule_name][0]["value"] == True and config.Rules[rule_name][1]["value"] == "implies":
+    elif len(config.Rules[rule_name]) > 3 and config.Rules[rule_name][0]["value"] == True and config.Rules[rule_name][1]["value"] == "implies":
         is_need_to_change, facts_to_change = check_right_part(rule_name)
         if is_need_to_change:
             for fact, value in facts_to_change:
                 config.Facts[fact] = value
     # ... and ... -> False => left part if Fasle
-    elif config.Rules[rule_name][-1]["value"] == False and config.Rules[rule_name][-2]["value"] == "implies":
+    elif len(config.Rules[rule_name]) > 3 and config.Rules[rule_name][-1]["value"] == False and config.Rules[rule_name][-2]["value"] == "implies":
         is_need_to_change, facts_to_change = check_left_part(rule_name)
         if is_need_to_change:
             for fact, value in facts_to_change:
@@ -284,13 +284,13 @@ def check_IFANDONLYIF(rule_name):
             else:
                 config.Facts[config.Rules[rule_name][0]["value"]] = not config.Rules[rule_name][2]["value"]
     # bool <-> ... and ...
-    elif config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][1]["value"] == "implies":
+    elif len(config.Rules[rule_name]) > 3 and config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][1]["value"] == "implies":
         is_need_to_change, facts_to_change = check_right_part(rule_name, config.Rules[rule_name][0]["value"])
         if is_need_to_change:
             for fact, value in facts_to_change:
                 config.Facts[fact] = value
     # ... and ... <-> bool
-    elif config.Rules[rule_name][-1]["type"] == "bool" and config.Rules[rule_name][-2]["value"] == "implies":
+    elif len(config.Rules[rule_name]) > 3 and config.Rules[rule_name][-1]["type"] == "bool" and config.Rules[rule_name][-2]["value"] == "implies":
         is_need_to_change, facts_to_change = check_left_part(rule_name, config.Rules[rule_name][-1]["value"])
         if is_need_to_change:
             for fact, value in facts_to_change:
