@@ -16,7 +16,27 @@ bracket2 = {
 
 def insert_brackets(rule_name, index):
     print("Before:")
-    print(config.Rules[rule_name])
+    for i in config.Rules[rule_name]:
+        print(i["value"], end=' ')
+    print("\n")
+    i = index + 1
+    k = 0
+    while i < len(config.Rules[rule_name]):
+        if config.Rules[rule_name][i] == '(':
+            k -= 1
+        elif config.Rules[rule_name][i] == ')':
+            k += 1
+        if k == 0:
+            if i+1 == len(config.Rules[rule_name]):
+                config.Rules[rule_name].append(bracket2)
+            else:
+                config.Rules[rule_name].insert(i+1, bracket2)
+            print("in while2")
+            for i in config.Rules[rule_name]:
+                print(i["value"], end=' ')
+            print("\n")
+            break
+        i += 1
     i = index - 1
     k = 0
     while i >= 0:
@@ -25,22 +45,19 @@ def insert_brackets(rule_name, index):
         elif config.Rules[rule_name][i] == ')':
             k += 1
         if k == 0:
-            config.Rules[rule_name].insert(i-1, bracket1)
+            config.Rules[rule_name].insert(i, bracket1)
+            print("in while1")
+            for i in config.Rules[rule_name]:
+                print(i["value"], end=' ')
+            print("\n")
             break
         i -= 1
-    i = index
-    k = 0
-    while i < len(config.Rules[rule_name]):
-        if config.Rules[rule_name][i] == '(':
-            k -= 1
-        elif config.Rules[rule_name][i] == ')':
-            k += 1
-        if k == 0:
-            config.Rules[rule_name].insert(i+1, bracket2)
-            break
-        i += 1
+    
+    check_BRACKETS(rule_name)
     print("Isert Bravkets:")
-    print(config.Rules[rule_name])
+    for i in config.Rules[rule_name]:
+        print(i["value"], end=' ')
+    print("\n")
 
 def check_BRACKETS(rule_name):
     lenght = len(config.Rules[rule_name])
@@ -58,6 +75,11 @@ def check_BRACKETS(rule_name):
                     config.Rules[rule_name][i + 1]["value"] = not config.Rules[rule_name][i + 1]["value"]
             del config.Rules[rule_name][i]
             del config.Rules[rule_name][i + 1]
+            check_BRACKETS(rule_name)
+        # () -> ...
+        elif i + 1 < lenght and r["value"] == "(" and config.Rules[rule_name][i + 1]["value"] == ")":
+            del config.Rules[rule_name][i]
+            del config.Rules[rule_name][i]
             check_BRACKETS(rule_name)
 
 
@@ -115,8 +137,8 @@ def check_AND(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
-            # else:
-            #     insert_brackets(rule_name, i)
+            else:
+                insert_brackets(rule_name, i)
 
 
 def check_OR(rule_name):
@@ -175,8 +197,8 @@ def check_OR(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
-            # else:
-            #     insert_brackets(rule_name, i)
+            else:
+                insert_brackets(rule_name, i)
 
 
 def check_XOR(rule_name):
