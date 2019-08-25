@@ -2,6 +2,45 @@
 import json
 import config
 
+bracket1 = {
+    "type": "operation",
+    "value": "(",
+    "not": False
+  }
+
+bracket2 = {
+    "type": "operation",
+    "value": ")",
+    "not": False
+  }
+
+def insert_brackets(rule_name, index):
+    print("Before:")
+    print(config.Rules[rule_name])
+    i = index - 1
+    k = 0
+    while i >= 0:
+        if config.Rules[rule_name][i] == '(':
+            k -= 1
+        elif config.Rules[rule_name][i] == ')':
+            k += 1
+        if k == 0:
+            config.Rules[rule_name].insert(i-1, bracket1)
+            break
+        i -= 1
+    i = index
+    k = 0
+    while i < len(config.Rules[rule_name]):
+        if config.Rules[rule_name][i] == '(':
+            k -= 1
+        elif config.Rules[rule_name][i] == ')':
+            k += 1
+        if k == 0:
+            config.Rules[rule_name].insert(i+1, bracket2)
+            break
+        i += 1
+    print("Isert Bravkets:")
+    print(config.Rules[rule_name])
 
 def check_BRACKETS(rule_name):
     lenght = len(config.Rules[rule_name])
@@ -76,6 +115,8 @@ def check_AND(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
+            else:
+                insert_brackets(rule_name, i)
 
 
 def check_OR(rule_name):
@@ -134,6 +175,8 @@ def check_OR(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
+            else:
+                insert_brackets(rule_name, i)
 
 
 def check_XOR(rule_name):
@@ -233,8 +276,8 @@ def check_left_part(rule_name, boolean=True):
     
 
 def check_IMPLIES(rule_name):
-    print("In implise we have:")
-    print(json.dumps(config.Rules[rule_name], indent=2))
+    # print("In implise we have:")
+    # print(json.dumps(config.Rules[rule_name], indent=2))
     # ... -> ... but A -> True or False -> A then A = underfit
     if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
@@ -331,9 +374,9 @@ def calculate(rule_name):
 
 
 def transform(rule_name: str, fact: str):
-    print(json.dumps(config.Rules[rule_name], indent=2))
-    print(json.dumps(config.Facts, indent=2))
-    print("Fact to change: ", fact)
+    #print(json.dumps(config.Rules[rule_name], indent=2))
+    #print(json.dumps(config.Facts, indent=2))
+    #print("Fact to change: ", fact)
 
     for i, r in enumerate(config.Rules[rule_name]):
         if r["value"] == fact:
@@ -344,8 +387,8 @@ def transform(rule_name: str, fact: str):
             # A -> bool
             else:
                 config.Rules[rule_name][i]["value"] = config.Facts[fact]
-    print("After inserting:")
-    print(json.dumps(config.Rules[rule_name], indent=2))
+    #print("After inserting:")
+    #print(json.dumps(config.Rules[rule_name], indent=2))
     return calculate(rule_name)
 
 

@@ -1,8 +1,7 @@
-B + C => A
-D ^ E => B
-B => C
+A | B + C => E
+(F | G) + H => E
 
 #[INITIAL FACTS HERE]
-?A
+?E
 
-=D
+=
