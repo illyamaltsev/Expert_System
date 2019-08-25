@@ -198,7 +198,7 @@ def check_XOR(rule_name):
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_XOR(rule_name)
 
-def check_right_part(rule_name):
+def check_right_part(rule_name, boolean=True):
     facts_to_change = []
     implies = False
     for rule in config.Rules[rule_name]:
@@ -213,7 +213,7 @@ def check_right_part(rule_name):
                 return False, facts_to_change
             # append fact and value what change to
             elif rule["type"] == "fact":
-                facts_to_change.append({rule["value"]:not rule["not"]})
+                facts_to_change.append({rule["value"]:(not rule["not"]) and boolean})
     # return True and facts_to_change only if it's OK
     return True, facts_to_change
 
@@ -229,10 +229,10 @@ def check_left_part(rulename, boolean=True):
             return False, facts_to_change
         # append fact and value what change to
         elif rule["type"] == "fact":
-            facts_to_change.append({rule["value"]:not rule["not"]})
+            facts_to_change.append({rule["value"]:(not rule["not"]) and boolean})
     
 
-def check_IMPLIES(rule_name, boolean=True):
+def check_IMPLIES(rule_name):
     # ... -> ... but A -> True or False -> A then A = underfit
     if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
@@ -285,13 +285,13 @@ def check_IFANDONLYIF(rule_name):
                 config.Facts[config.Rules[rule_name][0]["value"]] = not config.Rules[rule_name][2]["value"]
     # bool <-> ... and ...
     elif config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][1]["value"] == "implies":
-        is_need_to_change, facts_to_change = check_right_part(rule_name)
+        is_need_to_change, facts_to_change = check_right_part(rule_name, config.Rules[rule_name][0]["value"])
         if is_need_to_change:
             for fact, value in facts_to_change:
                 config.Facts[fact] = value
     # ... and ... <-> bool
-    elif config.Rules[rule_name][-1]["value"] == False and config.Rules[rule_name][-2]["value"] == "implies":
-        is_need_to_change, facts_to_change = check_left_part(rule_name)
+    elif config.Rules[rule_name][-1]["type"] == "bool" and config.Rules[rule_name][-2]["value"] == "implies":
+        is_need_to_change, facts_to_change = check_left_part(rule_name, config.Rules[rule_name][-1]["value"])
         if is_need_to_change:
             for fact, value in facts_to_change:
                 config.Facts[fact] = value
