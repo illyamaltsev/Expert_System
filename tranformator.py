@@ -217,7 +217,7 @@ def check_right_part(rule_name):
     # return True and facts_to_change only if it's OK
     return True, facts_to_change
 
-def check_left_part(rulename, boolean=True):
+def check_left_part(rule_name, boolean=True):
     facts_to_change = []
     for rule in config.Rules[rule_name]:
         # ignore left side, before implies
@@ -250,7 +250,7 @@ def check_IMPLIES(rule_name, boolean=True):
                 config.Facts[config.Rules[rule_name][0]["value"]] = False
             # !A => True
             else:
-                config.Facts[Rules[rule_name][0]["value"]] = True
+                config.Facts[config.Rules[rule_name][0]["value"]] = True
     # True -> ... and ... => right part is True
     elif config.Rules[rule_name][0]["value"] == True and config.Rules[rule_name][1]["value"] == "implies":
         is_need_to_change, facts_to_change = check_right_part(rule_name)
@@ -312,7 +312,7 @@ def calculate(rule_name):
         check_OR(rule_name)  # +
         check_XOR(rule_name)  # +
         check_IMPLIES(rule_name)  # +-
-        check_IFANDONLYIF(rule_name)  # +-
+        # check_IFANDONLYIF(rule_name)  # +-
         rez = check_FINAL(rule_name)  # +-
         if cur_len == len(config.Rules):
             if rez:

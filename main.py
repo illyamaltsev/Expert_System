@@ -6,7 +6,7 @@ import networkx as nx
 from utils.reader import read_all
 from utils.lexer import lex
 from utils.parser import parse
-from utils.drawer import draw_graph
+from utils.drawer import draw_graph, init_pos
 import config
 from tranformator import transform
 
@@ -32,7 +32,6 @@ def solve():
             res = transform(rule, fact)
             if res:  # if transform solved all rule
                 config.Graph.remove_node(rule)
-        config.Graph.remove_node(fact)
         facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
 
 
@@ -50,6 +49,7 @@ def main(argc, argv):
 
     config.init(Rules, Facts, Graph)
 
+    init_pos()
     draw_graph()
     solve()
 
