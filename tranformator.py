@@ -233,6 +233,8 @@ def check_left_part(rule_name, boolean=True):
     
 
 def check_IMPLIES(rule_name):
+    print("In implise we have:")
+    print(json.dumps(config.Rules[rule_name], indent=2))
     # ... -> ... but A -> True or False -> A then A = underfit
     if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
@@ -321,7 +323,9 @@ def calculate(rule_name):
 
 
 def transform(rule_name: str, fact: str):
-    print(json.dumps(config.Rules, indent=2))
+    print(json.dumps(config.Rules[rule_name], indent=2))
+    print(json.dumps(config.Facts, indent=2))
+    print("Fact to change: ", fact)
 
     for i, r in enumerate(config.Rules[rule_name]):
         if r["value"] == fact:
@@ -332,6 +336,8 @@ def transform(rule_name: str, fact: str):
             # A -> bool
             else:
                 config.Rules[rule_name][i]["value"] = config.Facts[fact]
+    print("After inserting:")
+    print(json.dumps(config.Rules[rule_name], indent=2))
     return calculate(rule_name)
 
 
