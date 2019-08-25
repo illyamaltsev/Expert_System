@@ -1,69 +1,14 @@
 import json
 
-Rules = {
-    'R1':[
-        {
-            "type": "operation",
-            "value": "(",
-            "not": False
-        },
-        {
-            "type": "fact", # "type": bool
-            "value": "B",   # "value": True
-            "not": False
-        },
-        {
-            "type": "operation",
-            "value": ")"
-        },
-        {
-            "type": "operation",
-            "value": "and"
-        },
-        {
-            "type": "fact",
-            "value": "A",
-            "not": False
-        },
-        {
-            "type": "operation",
-            "value": "implies"
-        },
-        {
-            "type": "fact",
-            "value": "A",
-            "not": False
-        }
-    ]
-}
-
-Facts = {
-    'B': True
-    
-}
-
-"""
-    rule name examples:
-    1)rule_name = 'R1'
-    2)rule_name = 'R2'
-    
-    fact examples:
-    1)fact = {
-        "fact": "B"
-        "value": True
-    }
-    2)fact = {
-        "fact": "A"
-        "value": False
-    }
-""" 
 
 def check_BRACKETS(rule_name):
-     global Rules
-     lenght = len(Rules[rule_name])
-     for i, r in enumerate(Rules[rule_name]):
+    global Rules
+    lenght = len(Rules[rule_name])
+    for i, r in enumerate(Rules[rule_name]):
         # (A) -> A or (bool) -> bool
-        if i + 2 < lenght and r["value"] == "(" and (Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and Rules[rule_name][i + 2]["value"] == ")":
+        if i + 2 < lenght and r["value"] == "(" and (
+                Rules[rule_name][i + 1]["type"] == "fact" or Rules[rule_name][i + 1]["type"] == "bool") and \
+                Rules[rule_name][i + 2]["value"] == ")":
             # !(...) -> !...
             if Rules[rule_name][i]["not"]:
                 # !(A) -> !A
@@ -74,6 +19,7 @@ def check_BRACKETS(rule_name):
             del Rules[rule_name][i]
             del Rules[rule_name][i + 1]
             check_BRACKETS(rule_name)
+
 
 def check_AND(rule_name):
     global Rules
@@ -130,6 +76,7 @@ def check_AND(rule_name):
                     Rules[rule_name][i - 1]["type"] = "bool"
                     Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
+
 
 def check_OR(rule_name):
     global Rules
@@ -188,6 +135,7 @@ def check_OR(rule_name):
                     Rules[rule_name][i - 1]["type"] = "bool"
                     Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
+
 
 def check_XOR(rule_name):
     global Rules
@@ -252,6 +200,7 @@ def check_XOR(rule_name):
                     Rules[rule_name][i - 1]["value"] = True
                 check_XOR(rule_name)
 
+
 def check_IMPLIES(rule_name):
     global Rules
     global Facts
@@ -274,7 +223,7 @@ def check_IMPLIES(rule_name):
             else:
                 Facts[Rules[rule_name][0]["value"]] = True
     # bool -> ... and ...
-    #elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
+    # elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 ==
     # ... and ... -> bool
 
 
@@ -300,8 +249,9 @@ def check_IFANDONLYIF(rule_name):
             else:
                 Facts[Rules[rule_name][0]["value"]] = not Rules[rule_name][2]["value"]
     # bool <-> ... and ...
-    #elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
+    # elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 ==
     # ... and ... <-> bool
+
 
 def check_FINAL(rule_name):
     global Rules
@@ -310,21 +260,20 @@ def check_FINAL(rule_name):
         return True
     return False
 
+
 def calculate(rule_name):
     global Rules
     while True:
         cur_len = len(Rules)
-        check_BRACKETS(rule_name)       #+
-        check_AND(rule_name)            #+ but only in left side
-        check_OR(rule_name)             #+
-        check_XOR(rule_name)            #+
-        check_IMPLIES(rule_name)        #+-
-        check_IFANDONLYIF(rule_name)    #+-
-        rez = check_FINAL(rule_name)    #+-
+        check_BRACKETS(rule_name)  # +
+        check_AND(rule_name)  # + but only in left side
+        check_OR(rule_name)  # +
+        check_XOR(rule_name)  # +
+        check_IMPLIES(rule_name)  # +-
+        check_IFANDONLYIF(rule_name)  # +-
+        rez = check_FINAL(rule_name)  # +-
         if cur_len == len(Rules):
             return rez
-
-
 
 
 def transform(rule_name: str, fact: str):
@@ -341,6 +290,9 @@ def transform(rule_name: str, fact: str):
                 Rules[rule_name][i]["value"] = Facts[fact]
     return calculate(rule_name)
 
+
+"""
 if __name__ == "__main__":
     print(transform('R1', 'B'))
     print(json.dumps(Rules, indent=4))
+"""
