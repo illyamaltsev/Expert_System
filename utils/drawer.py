@@ -6,6 +6,8 @@ import config
 
 def init_pos():
     global pos_nodes
+    global step
+    step = 0
     pos_nodes = nx.spring_layout(config.Graph)
 
 
@@ -34,9 +36,12 @@ def draw_graph(fact=None, rule_name=None):
             text += str(elem["value"]) + " "
         text += '\n'
 
+    text += "step: " + str(step)
+    globals()["step"]+=1
+
     pos_labels = {}
     for node, coords in pos_nodes.items():
-        pos_labels[node] = (coords[0], coords[1] + 0.08)
+        pos_labels[node] = (coords[0], coords[1] + 0.05)
 
     plt.figure(figsize=(15, 10))
     plt.title(text)

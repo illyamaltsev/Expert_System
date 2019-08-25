@@ -30,6 +30,7 @@ def solve():
         for rule in connected_rules:
             draw_graph(fact, rule)
             res = transform(rule, fact)
+            config.Graph.remove_edge(fact, rule)
             if res:  # if transform solved all rule
                 config.Graph.remove_node(rule)
         facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
