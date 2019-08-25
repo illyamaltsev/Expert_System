@@ -15,6 +15,8 @@ from tranformator import transform
 
 def priority(f):
     if f == '?':
+        return -2
+    if f == None:
         return -1
     return int(f)
 
@@ -34,6 +36,7 @@ def solve():
             if res:  # if transform solved all rule
                 config.Graph.remove_node(rule)
         facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
+
 
 
 def main(argc, argv):

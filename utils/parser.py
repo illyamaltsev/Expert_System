@@ -7,7 +7,7 @@ def push_facts(facts, true_facts, question_facts):
         elif f in question_facts:
             facts_dict[f] = '?'
         else:
-            facts_dict[f] = False
+            facts_dict[f] = None
     return facts_dict
 
 
