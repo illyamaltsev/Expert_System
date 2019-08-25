@@ -115,8 +115,8 @@ def check_AND(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
-            else:
-                insert_brackets(rule_name, i)
+            # else:
+            #     insert_brackets(rule_name, i)
 
 
 def check_OR(rule_name):
@@ -175,8 +175,8 @@ def check_OR(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
-            else:
-                insert_brackets(rule_name, i)
+            # else:
+            #     insert_brackets(rule_name, i)
 
 
 def check_XOR(rule_name):
