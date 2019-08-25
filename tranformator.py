@@ -245,8 +245,16 @@ def check_IMPLIES(rule_name):
             # !A => False
             else:
                 config.Facts[config.Rules[rule_name][2]["value"]] = False
+        # False -> A => A = False it's not right by default, but right by correction form
+        elif config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][0]["value"] == False and config.Rules[rule_name][2]["type"] == "fact":
+            # A => False
+            if not config.Rules[rule_name][2]["not"]:
+                config.Facts[config.Rules[rule_name][2]["value"]] = False
+            # !A => True
+            else:
+                config.Facts[config.Rules[rule_name][2]["value"]] = True
         # A -> False => A = False
-        if config.Rules[rule_name][0]["type"] == "fact" and config.Rules[rule_name][2]["type"] == "bool" and config.Rules[rule_name][2]["value"] == False:
+        elif config.Rules[rule_name][0]["type"] == "fact" and config.Rules[rule_name][2]["type"] == "bool" and config.Rules[rule_name][2]["value"] == False:
             # A => False
             if not config.Rules[rule_name][0]["not"]:
                 config.Facts[config.Rules[rule_name][0]["value"]] = False
