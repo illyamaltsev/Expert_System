@@ -2,58 +2,6 @@
 import json
 import config
 
-<<<<<<< HEAD
-Rules = {
-    'R1':[
-        {
-            "type": "bool",
-            "value": True,
-            "not": False
-        },
-        {
-            "type": "operation",
-            "value": "implies"
-        },
-        {
-            "type": "fact",
-            "value": "B",
-            "not": False
-        },
-        {
-            "type": "operation",
-            "value": "and",
-            "not": False
-        },
-        {
-            "type": "fact",
-            "value": "C",
-            "not": False
-        }
-    ]
-}
-
-Facts = {
-    'B': True,
-    'C': False
-}
-
-"""
-    rule name examples:
-    1)rule_name = 'R1'
-    2)rule_name = 'R2'
-    
-    fact examples:
-    1)fact = {
-        "fact": "B"
-        "value": True
-    }
-    2)fact = {
-        "fact": "A"
-        "value": False
-    }
-""" 
-=======
->>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
 
 def check_BRACKETS(rule_name):
     lenght = len(config.Rules[rule_name])
@@ -68,16 +16,9 @@ def check_BRACKETS(rule_name):
                 if config.Rules[rule_name][i + 1]["type"] == "fact":
                     config.Rules[rule_name][i + 1]["not"] = not config.Rules[rule_name][i + 1]["not"]
                 else:
-<<<<<<< HEAD
-                    Rules[rule_name][i + 1]["value"] = not Rules[rule_name][i + 1]["value"]
-            # раскрываем скобки удаляя их
-            del Rules[rule_name][i]
-            del Rules[rule_name][i + 1]
-=======
                     config.Rules[rule_name][i + 1]["value"] = not config.Rules[rule_name][i + 1]["value"]
             del config.Rules[rule_name][i]
             del config.Rules[rule_name][i + 1]
->>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
             check_BRACKETS(rule_name)
 
 
@@ -257,13 +198,10 @@ def check_XOR(rule_name):
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_XOR(rule_name)
 
-<<<<<<< HEAD
 def check_right_part(rule_name):
-    global Rules
-    global Facts
     facts_to_change = []
     implies = False
-    for rule in Rules[rule_name]:
+    for rule in config.Rules[rule_name]:
         # ignore left side, before implies
         if rule["value"] == "implies":
             implies = True
@@ -279,11 +217,9 @@ def check_right_part(rule_name):
     # return True and facts_to_change only if it's OK
     return True, facts_to_change
 
-def check_left_part(rulename):
-    global Rules
-    global Facts
+def check_left_part(rulename, boolean=True):
     facts_to_change = []
-    for rule in Rules[rule_name]:
+    for rule in config.Rules[rule_name]:
         # ignore left side, before implies
         if rule["value"] == "implies":
             return True, facts_to_change
@@ -295,10 +231,8 @@ def check_left_part(rulename):
         elif rule["type"] == "fact":
             facts_to_change.append({rule["value"]:not rule["not"]})
     
-=======
->>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
 
-def check_IMPLIES(rule_name):
+def check_IMPLIES(rule_name, boolean=True):
     # ... -> ... but A -> True or False -> A then A = underfit
     if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
@@ -316,27 +250,19 @@ def check_IMPLIES(rule_name):
                 config.Facts[config.Rules[rule_name][0]["value"]] = False
             # !A => True
             else:
-<<<<<<< HEAD
-                Facts[Rules[rule_name][0]["value"]] = True
+                config.Facts[Rules[rule_name][0]["value"]] = True
     # True -> ... and ... => right part is True
-    elif Rules[rule_name][0]["value"] == True and Rules[rule_name][1]["value"] == "implies":
+    elif config.Rules[rule_name][0]["value"] == True and config.Rules[rule_name][1]["value"] == "implies":
         is_need_to_change, facts_to_change = check_right_part(rule_name)
         if is_need_to_change:
             for fact, value in facts_to_change:
-                Facts[fact] = value
+                config.Facts[fact] = value
     # ... and ... -> False => left part if Fasle
-    elif Rules[rule_name][-1]["value"] == False and Rules[rule_name][-2]["value"] == "implies":
+    elif config.Rules[rule_name][-1]["value"] == False and config.Rules[rule_name][-2]["value"] == "implies":
         is_need_to_change, facts_to_change = check_left_part(rule_name)
         if is_need_to_change:
             for fact, value in facts_to_change:
-                Facts[fact] = value
-=======
-                config.Facts[config.Rules[rule_name][0]["value"]] = True
-    # bool -> ... and ...
-    # elif config.Rules[rule_name][0]["type"] = "bool" and config.Rules[rule_name][1]["value"] == "implies" and (len(config.Rules[rule_name]) - 3) / 2 ==
-    # ... and ... -> bool
-
->>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
+                config.Facts[fact] = value
 
 def check_IFANDONLYIF(rule_name):
     # ... <-> ...
@@ -358,8 +284,17 @@ def check_IFANDONLYIF(rule_name):
             else:
                 config.Facts[config.Rules[rule_name][0]["value"]] = not config.Rules[rule_name][2]["value"]
     # bool <-> ... and ...
-    # elif config.Rules[rule_name][0]["type"] = "bool" and config.Rules[rule_name][1]["value"] == "implies" and (len(config.Rules[rule_name]) - 3) / 2 ==
+    elif config.Rules[rule_name][0]["type"] == "bool" and config.Rules[rule_name][1]["value"] == "implies":
+        is_need_to_change, facts_to_change = check_right_part(rule_name)
+        if is_need_to_change:
+            for fact, value in facts_to_change:
+                config.Facts[fact] = value
     # ... and ... <-> bool
+    elif config.Rules[rule_name][-1]["value"] == False and config.Rules[rule_name][-2]["value"] == "implies":
+        is_need_to_change, facts_to_change = check_left_part(rule_name)
+        if is_need_to_change:
+            for fact, value in facts_to_change:
+                config.Facts[fact] = value
 
 
 def check_FINAL(rule_name):
@@ -403,10 +338,5 @@ def transform(rule_name: str, fact: str):
 """
 if __name__ == "__main__":
     print(transform('R1', 'B'))
-<<<<<<< HEAD
-    print(json.dumps(Rules, indent=4))
-    print(json.dumps(Facts, indent=4))
-=======
     print(json.dumps(config.Rules, indent=4))
 """
->>>>>>> 724ed74151d9addfe050691892bd9ffeff865bd9
