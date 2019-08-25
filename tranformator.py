@@ -1,28 +1,11 @@
+# coding: utf8
 import json
 
 Rules = {
     'R1':[
         {
-            "type": "operation",
-            "value": "(",
-            "not": False
-        },
-        {
-            "type": "fact", # "type": bool
-            "value": "B",   # "value": True
-            "not": False
-        },
-        {
-            "type": "operation",
-            "value": ")"
-        },
-        {
-            "type": "operation",
-            "value": "and"
-        },
-        {
-            "type": "fact",
-            "value": "A",
+            "type": "bool",
+            "value": True,
             "not": False
         },
         {
@@ -31,15 +14,25 @@ Rules = {
         },
         {
             "type": "fact",
-            "value": "A",
+            "value": "B",
+            "not": False
+        },
+        {
+            "type": "operation",
+            "value": "and",
+            "not": False
+        },
+        {
+            "type": "fact",
+            "value": "C",
             "not": False
         }
     ]
 }
 
 Facts = {
-    'B': True
-    
+    'B': True,
+    'C': False
 }
 
 """
@@ -71,6 +64,7 @@ def check_BRACKETS(rule_name):
                     Rules[rule_name][i + 1]["not"] = not Rules[rule_name][i + 1]["not"]
                 else:
                     Rules[rule_name][i + 1]["value"] = not Rules[rule_name][i + 1]["value"]
+            # раскрываем скобки удаляя их
             del Rules[rule_name][i]
             del Rules[rule_name][i + 1]
             check_BRACKETS(rule_name)
@@ -252,6 +246,44 @@ def check_XOR(rule_name):
                     Rules[rule_name][i - 1]["value"] = True
                 check_XOR(rule_name)
 
+def check_right_part(rule_name):
+    global Rules
+    global Facts
+    facts_to_change = []
+    implies = False
+    for rule in Rules[rule_name]:
+        # ignore left side, before implies
+        if rule["value"] == "implies":
+            implies = True
+            continue
+        # check only right side
+        if implies == True:
+            # if operations not "and", "(", ")" -> return false
+            if rule["type"] == "operation" and rule["value"] not in ["and", "(", ")"]:
+                return False, facts_to_change
+            # append fact and value what change to
+            elif rule["type"] == "fact":
+                facts_to_change.append({rule["value"]:not rule["not"]})
+    # return True and facts_to_change only if it's OK
+    return True, facts_to_change
+
+def check_left_part(rulename):
+    global Rules
+    global Facts
+    facts_to_change = []
+    for rule in Rules[rule_name]:
+        # ignore left side, before implies
+        if rule["value"] == "implies":
+            return True, facts_to_change
+        # check only right side
+        # if operations not "and", "(", ")" -> return false
+        if rule["type"] == "operation" and rule["value"] not in ["and", "(", ")"]:
+            return False, facts_to_change
+        # append fact and value what change to
+        elif rule["type"] == "fact":
+            facts_to_change.append({rule["value"]:not rule["not"]})
+    
+
 def check_IMPLIES(rule_name):
     global Rules
     global Facts
@@ -273,10 +305,18 @@ def check_IMPLIES(rule_name):
             # !A => True
             else:
                 Facts[Rules[rule_name][0]["value"]] = True
-    # bool -> ... and ...
-    #elif Rules[rule_name][0]["type"] = "bool" and Rules[rule_name][1]["value"] == "implies" and (len(Rules[rule_name]) - 3) / 2 == 
-    # ... and ... -> bool
-
+    # True -> ... and ... => right part is True
+    elif Rules[rule_name][0]["value"] == True and Rules[rule_name][1]["value"] == "implies":
+        is_need_to_change, facts_to_change = check_right_part(rule_name)
+        if is_need_to_change:
+            for fact, value in facts_to_change:
+                Facts[fact] = value
+    # ... and ... -> False => left part if Fasle
+    elif Rules[rule_name][-1]["value"] == False and Rules[rule_name][-2]["value"] == "implies":
+        is_need_to_change, facts_to_change = check_left_part(rule_name)
+        if is_need_to_change:
+            for fact, value in facts_to_change:
+                Facts[fact] = value
 
 def check_IFANDONLYIF(rule_name):
     global Rules
@@ -344,3 +384,4 @@ def transform(rule_name: str, fact: str):
 if __name__ == "__main__":
     print(transform('R1', 'B'))
     print(json.dumps(Rules, indent=4))
+    print(json.dumps(Facts, indent=4))
