@@ -13,19 +13,41 @@ from tranformator import transform
 # Global variables
 
 visual = False
+right_Nones = []
 
-def priority(f):
-    if f == '?':
+
+def priority(fact_name):
+    fact_value = config.Facts[fact_name]
+    if fact_value == '?':
+        return -3
+    elif fact_value == None and fact_name in right_Nones:
         return -2
-    if f == None:
+    elif fact_value == None:
         return -1
-    return int(f)
+    elif fact_value == False:
+        return 0
+    elif fact_value == True:
+        return 1
+
+
+def update_none_right():
+    global right_Nones
+    right_Nones = []
+    for rule_name in list(config.Rules.keys()):
+        rule = config.Rules[rule_name]
+        for i, elem in enumerate(rule):
+            print(elem)
+            if elem["value"] == "implies":
+                while i < len(rule):
+                    if rule[i]["type"] == "fact" and rule[i]["value"] not in right_Nones:
+                        right_Nones.append(rule[i]["value"])
+                    i += 1
 
 
 def solve():
-    global visual
     facts = list(config.Facts.keys())
-    facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
+    update_none_right()
+    facts = sorted(facts, key=lambda f: priority(f), reverse=True)
     while len(facts) > 0:
         fact = facts.pop(0)
         if config.Facts[fact] == '?':
@@ -38,7 +60,8 @@ def solve():
             config.Graph.remove_edge(fact, rule)
             if res:  # if transform solved all rule
                 config.Graph.remove_node(rule)
-        facts = sorted(facts, key=lambda f: priority(config.Facts[f]), reverse=True)
+        update_none_right()
+        facts = sorted(facts, key=lambda f: priority(f), reverse=True)
 
 
 
