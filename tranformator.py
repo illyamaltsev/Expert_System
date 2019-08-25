@@ -213,7 +213,7 @@ def check_right_part(rule_name, boolean=True):
                 return False, facts_to_change
             # append fact and value what change to
             elif rule["type"] == "fact":
-                facts_to_change.append({rule["value"]:(not rule["not"]) and boolean})
+                facts_to_change.append((rule["value"], (not rule["not"]) and boolean))
     # return True and facts_to_change only if it's OK
     return True, facts_to_change
 
@@ -229,7 +229,7 @@ def check_left_part(rule_name, boolean=True):
             return False, facts_to_change
         # append fact and value what change to
         elif rule["type"] == "fact":
-            facts_to_change.append({rule["value"]:(not rule["not"]) and boolean})
+            facts_to_change.append((rule["value"], (not rule["not"]) and boolean))
     
 
 def check_IMPLIES(rule_name):
