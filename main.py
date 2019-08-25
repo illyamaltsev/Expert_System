@@ -52,6 +52,7 @@ def main(argc, argv):
     init_pos()
     draw_graph()
     solve()
+    draw_graph()
 
     # Result
     for q in question_facts:
