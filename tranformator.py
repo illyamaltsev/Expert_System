@@ -14,46 +14,89 @@ bracket2 = {
     "not": False
   }
 
-def insert_brackets(rule_name, index):
+def get_left_index(rule_name, index):
+    operation = config.Rules[rule_name][index]["value"]
+    k = 0
+    index -= 1
+    while index >= 0:
+        if config.Rules[rule_name][index]["value"] == ')':
+            k -= 1
+        elif config.Rules[rule_name][index]["value"] == '(':
+            k += 1
+        if k == 0 and config.Rules[rule_name][index]["type"] != 'operation' and config.Rules[rule_name][index - 1]["value"] != operation:
+            return index
+        index -= 1
+
+def get_right_index(rule_name, index):
+    operation = config.Rules[rule_name][index]["value"]
+    k = 0
+    index += 1
+    while index < len(config.Rules[rule_name]):
+        if config.Rules[rule_name][index]["value"] == ')':
+            k -= 1
+        elif config.Rules[rule_name][index]["value"] == '(':
+            k += 1
+        if k == 0 and (config.Rules[rule_name][index]["type"] != 'operation' or config.Rules[rule_name][index]["value"] == "implies" or config.Rules[rule_name][index]["value"] == "if and only if") and config.Rules[rule_name][index + 1]["value"] != operation:
+            if config.Rules[rule_name][index]["type"] == 'operation':
+                return index
+            return index + 1
+        index += 1
+
+#insert in index_left and index_right if there was not inserted yet
+def insert_brackets_index(rule_name, index_left, index_right):
+    if index_left and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and config.Rules[rule_name][index_right]["value"] != ")":
+        config.Rules[rule_name].insert(index_right, bracket2)
+        config.Rules[rule_name].insert(index_left, bracket1)
+
+def insert_brackets(rule_name):
     print("Before:")
     for i in config.Rules[rule_name]:
         print(i["value"], end=' ')
     print("\n")
-    i = index + 1
-    k = 0
-    while i < len(config.Rules[rule_name]):
-        if config.Rules[rule_name][i] == '(':
-            k -= 1
-        elif config.Rules[rule_name][i] == ')':
-            k += 1
-        if k == 0:
-            if i+1 == len(config.Rules[rule_name]):
-                config.Rules[rule_name].append(bracket2)
-            else:
-                config.Rules[rule_name].insert(i+1, bracket2)
-            print("in while2")
-            for i in config.Rules[rule_name]:
-                print(i["value"], end=' ')
-            print("\n")
-            break
-        i += 1
-    i = index - 1
-    k = 0
-    while i >= 0:
-        if config.Rules[rule_name][i] == '(':
-            k -= 1
-        elif config.Rules[rule_name][i] == ')':
-            k += 1
-        if k == 0:
-            config.Rules[rule_name].insert(i, bracket1)
-            print("in while1")
-            for i in config.Rules[rule_name]:
-                print(i["value"], end=' ')
-            print("\n")
-            break
-        i -= 1
-    
-    check_BRACKETS(rule_name)
+
+    for i, r in enumerate(config.Rules[rule_name]):
+        # A and B -> (A and B) 
+        if r["value"] == "and":
+            insert_brackets_index(rule_name, get_left_index(rule_name, i), get_right_index(rule_name, i))
+
+    for i, r in enumerate(config.Rules[rule_name]):
+        # A or B -> (A or B) 
+        if r["value"] == "or":
+            insert_brackets_index(rule_name, get_left_index(rule_name, i), get_right_index(rule_name, i))
+
+    # i = index - 1
+    # k = 0
+    # while i >= 0:
+    #     if config.Rules[rule_name][i] == '(':
+    #         k -= 1
+    #     elif config.Rules[rule_name][i] == ')':
+    #         k += 1
+    #     if k == 0:
+    #         config.Rules[rule_name].insert(i, bracket1)
+    #         print("in while1")
+    #         for i in config.Rules[rule_name]:
+    #             print(i["value"], end=' ')
+    #         print("\n")
+    #         break
+    #     i -= 1
+    # i = index + 2
+    # while i < len(config.Rules[rule_name]):
+    #     if config.Rules[rule_name][i] == '(':
+    #         k -= 1
+    #     elif config.Rules[rule_name][i] == ')':
+    #         k += 1
+    #     if k == 0:
+    #         if i+1 == len(config.Rules[rule_name]):
+    #             config.Rules[rule_name].append(bracket2)
+    #         else:
+    #             config.Rules[rule_name].insert(i+1, bracket2)
+    #         print("in while2")
+    #         for i in config.Rules[rule_name]:
+    #             print(i["value"], end=' ')
+    #         print("\n")
+    #         break
+    #     i += 1
+    # check_BRACKETS(rule_name)
     print("Isert Bravkets:")
     for i in config.Rules[rule_name]:
         print(i["value"], end=' ')
@@ -137,8 +180,6 @@ def check_AND(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = False
                 check_AND(rule_name)
-            else:
-                insert_brackets(rule_name, i)
 
 
 def check_OR(rule_name):
@@ -197,8 +238,6 @@ def check_OR(rule_name):
                     config.Rules[rule_name][i - 1]["type"] = "bool"
                     config.Rules[rule_name][i - 1]["value"] = True
                 check_OR(rule_name)
-            else:
-                insert_brackets(rule_name, i)
 
 
 def check_XOR(rule_name):
@@ -400,6 +439,7 @@ def transform(rule_name: str, fact: str):
     #print(json.dumps(config.Facts, indent=2))
     #print("Fact to change: ", fact)
 
+    insert_brackets(rule_name)
     for i, r in enumerate(config.Rules[rule_name]):
         if r["value"] == fact:
             config.Rules[rule_name][i]["type"] = "bool"
