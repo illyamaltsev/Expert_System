@@ -1,6 +1,7 @@
 # coding: utf8
 import json
 import config
+from utils.drawer import rule_to_str
 
 bracket1 = {
     "type": "operation",
@@ -426,13 +427,17 @@ def calculate(rule_name):
         check_IFANDONLYIF(rule_name)  # +-
         rez = check_FINAL(rule_name)  # +-
         if cur_len == len(config.Rules[rule_name]):
+            if config.native:
+                print("So after our Artificial Intelligence (if/else) algorithm we can transform this rule to:")
+                print(rule_to_str(rule_name))
             if rez:
                 del config.Rules[rule_name]
+                if config.native:
+                    print("Yoooho, we found a new fact!!!")
             return rez
 
 
 def transform(rule_name: str, fact: str):
-
     insert_brackets(rule_name)
     for i, r in enumerate(config.Rules[rule_name]):
         if r["value"] == fact:

@@ -2,17 +2,16 @@ import sys
 import json
 import networkx as nx
 
-
 from utils.reader import read_all
 from utils.lexer import lex
 from utils.parser import parse
-from utils.drawer import draw_graph, init_pos
+from utils.drawer import draw_graph, init_pos, rule_to_str
 import config
 from tranformator import transform
 
 # Global variables
 
-visual = False
+
 right_Nones = []
 
 
@@ -48,15 +47,25 @@ def solve():
     update_none_right()
     facts = sorted(facts, key=lambda f: priority(f), reverse=True)
     while len(facts) > 0:
+        if config.native:
+            print("============================")
         fact = facts.pop(0)
+        if config.native and config.Facts[fact] != None:
+            print("We know exactly that " + fact + " is " + str(config.Facts[fact]))
         if config.Facts[fact] == '?':
             return
         if config.Facts[fact] == None:
             config.Facts[fact] = False
+            if config.native:
+                print(fact + " is " + str(config.Facts[fact]))
         connected_rules = list(config.Graph.neighbors(fact))
         for rule in connected_rules:
-            if visual:
+            if config.visual:
                 draw_graph(fact, rule)
+            if config.native:
+                print("-  -  -  -  -  -  -  -  -  -")
+                print(fact, "is mentioned in rule:", rule_to_str(rule))
+
             res = transform(rule, fact)
             config.Graph.remove_edge(fact, rule)
             if res:  # if transform solved all rule
@@ -65,11 +74,13 @@ def solve():
         facts = sorted(facts, key=lambda f: priority(f), reverse=True)
 
 
-
 def main(argc, argv):
-    global visual
+    visual = False
+    native = False
     if "-v" in argv:
         visual = True
+    if "-n" in argv:
+        native = True
     try:
         f_content = read_all(argv[argv.index("-f") + 1])
     except:
@@ -84,13 +95,13 @@ def main(argc, argv):
     Facts = parsed["facts"]
     Graph = nx.Graph(parsed["graph_body"])
 
-    config.init(Rules, Facts, Graph)
+    config.init(Rules, Facts, Graph, visual, native)
 
     init_pos()
-    if visual:
+    if config.visual:
         draw_graph()
     solve()
-    if visual:
+    if config.visual:
         draw_graph()
 
     # Result
