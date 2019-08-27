@@ -54,10 +54,6 @@ def insert_brackets_index(rule_name, index_left, index_right):
         config.Rules[rule_name].insert(index_left, bracket1)
 
 def insert_brackets(rule_name):
-    print("Before:")
-    for i in config.Rules[rule_name]:
-        print(i["value"], end=' ')
-    print("\n")
 
     for i, r in enumerate(config.Rules[rule_name]):
         # A and B -> (A and B) 
@@ -102,10 +98,7 @@ def insert_brackets(rule_name):
     #         break
     #     i += 1
     # check_BRACKETS(rule_name)
-    print("Isert Bravkets:")
-    for i in config.Rules[rule_name]:
-        print(i["value"], end=' ')
-    print("\n")
+
 
 def check_BRACKETS(rule_name):
     lenght = len(config.Rules[rule_name])
@@ -342,8 +335,6 @@ def check_left_part(rule_name, boolean=True):
     
 
 def check_IMPLIES(rule_name):
-    # print("In implise we have:")
-    # print(json.dumps(config.Rules[rule_name], indent=2))
     # ... -> ... but A -> True or False -> A then A = underfit
     if len(config.Rules[rule_name]) == 3 and config.Rules[rule_name][1]["value"] == "implies":
         # True -> A => A = True
@@ -382,6 +373,7 @@ def check_IMPLIES(rule_name):
         if is_need_to_change:
             for fact, value in facts_to_change:
                 config.Facts[fact] = value
+
 
 def check_IFANDONLYIF(rule_name):
     # ... <-> ...
@@ -440,9 +432,6 @@ def calculate(rule_name):
 
 
 def transform(rule_name: str, fact: str):
-    #print(json.dumps(config.Rules[rule_name], indent=2))
-    #print(json.dumps(config.Facts, indent=2))
-    #print("Fact to change: ", fact)
 
     insert_brackets(rule_name)
     for i, r in enumerate(config.Rules[rule_name]):
@@ -454,13 +443,4 @@ def transform(rule_name: str, fact: str):
             # A -> bool
             else:
                 config.Rules[rule_name][i]["value"] = config.Facts[fact]
-    #print("After inserting:")
-    #print(json.dumps(config.Rules[rule_name], indent=2))
     return calculate(rule_name)
-
-
-"""
-if __name__ == "__main__":
-    print(transform('R1', 'B'))
-    print(json.dumps(config.Rules, indent=4))
-"""
