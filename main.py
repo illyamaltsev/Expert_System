@@ -64,7 +64,16 @@ def solve():
         update_none_right()
         facts = sorted(facts, key=lambda f: priority(f), reverse=True)
 
-
+def check_rules(Rules):
+    # is_implie = False
+    # for rule in Rules:
+    #     for i, r in enumerate(rule):
+    #         if r["value"] == "implies" or r["value"] == "if and only if":
+    #             is_implie = True
+    #         if r["type"] == "fact" and i + 1 < len(rule) and (rule[i + 1]["type"] == "fact" or rule[i + 1]["value"] == "("):
+    #             return False
+    #         elif r["type"] == "operation" and r["value"] != "(" and i + 1 < len(rule) and rule[i + 1]["type"] == "operation":
+   pass         
 
 def main(argc, argv):
     global visual
@@ -81,6 +90,7 @@ def main(argc, argv):
 
     question_facts = parsed["question_facts"]
     Rules = parsed["rules"]
+    check_rules(Rules)
     Facts = parsed["facts"]
     Graph = nx.Graph(parsed["graph_body"])
 

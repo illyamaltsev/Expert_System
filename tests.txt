@@ -1,4 +1,4 @@
-B | C => E | F
+B | C E | F
 (F | G) + H => E
 
 ?E
