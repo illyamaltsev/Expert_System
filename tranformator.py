@@ -37,12 +37,16 @@ def get_right_index(rule_name, index):
         elif config.Rules[rule_name][index]["value"] == '(':
             k += 1
         if k == 0:
+            #if A and ...; and ... -> continue
+            if (index + 1 < len(config.Rules[rule_name]) and (config.Rules[rule_name][index]["type"] == "fact" or config.Rules[rule_name][index]["type"] == "bool") and config.Rules[rule_name][index + 1]["value"] == operation) or config.Rules[rule_name][index]["value"] == operation:
+                index += 1
+                continue
             return index + 1
         index += 1
 
 #insert in index_left and index_right if there was not inserted yet
 def insert_brackets_index(rule_name, index_left, index_right):
-    if index_left and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and (index_right == len(config.Rules[rule_name]) or config.Rules[rule_name][index_right]["value"] != ")"):
+    if index_left != None and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and (index_right == len(config.Rules[rule_name]) or config.Rules[rule_name][index_right]["value"] != ")"):
         if index_right == len(config.Rules[rule_name]):
             config.Rules[rule_name].append(bracket2)
         else:
