@@ -1,15 +1,18 @@
 import string
 import json
 
-def init(r, f, g=None):
+
+def init(r, f, g, v, n):
     global Rules
     global Facts
     global Graph
+    global visual
+    global native
     Rules = r
     Facts = f
     Graph = g
-    #print(json.dumps(Rules, indent=4))
-    #print(json.dumps(Facts, indent=4))
+    visual = v
+    native = n
 
 
 FACT_CHARS = string.ascii_uppercase
@@ -24,4 +27,3 @@ OPERATIONS = {
     '(': '(',
     ')': ')'
 }
-

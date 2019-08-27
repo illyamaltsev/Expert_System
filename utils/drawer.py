@@ -4,6 +4,18 @@ import re
 import config
 
 
+def rule_to_str(rule_name):
+    s = ""
+    for elem in list(config.Rules[rule_name]):
+        try:
+            if elem["not"]:
+                s += "not "
+        except:
+            pass
+        s += str(elem["value"]) + " "
+    return s
+
+
 def init_pos():
     global pos_nodes
     global step
@@ -41,7 +53,7 @@ def draw_graph(fact=None, rule_name=None):
                 if elem["not"]:
                     text += "not "
             except:
-                print("")
+                pass
             text += str(elem["value"]) + " "
         text += '\n'
 
