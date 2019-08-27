@@ -47,6 +47,10 @@ def get_right_index(rule_name, index):
 #insert in index_left and index_right if there was not inserted yet
 def insert_brackets_index(rule_name, index_left, index_right):
     if index_left != None and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and (index_right == len(config.Rules[rule_name]) or config.Rules[rule_name][index_right]["value"] != ")"):
+        if index_left == 0 and config.Rules[rule_name][index_right]["value"] == "implies":
+            return
+        if config.Rules[rule_name][index_left - 1]["value"] == "implies" and index_right == len(config.Rules[rule_name]):
+            return
         if index_right == len(config.Rules[rule_name]):
             config.Rules[rule_name].append(bracket2)
         else:
@@ -64,41 +68,6 @@ def insert_brackets(rule_name):
         # A or B -> (A or B) 
         if r["value"] == "or":
             insert_brackets_index(rule_name, get_left_index(rule_name, i), get_right_index(rule_name, i))
-
-    # i = index - 1
-    # k = 0
-    # while i >= 0:
-    #     if config.Rules[rule_name][i] == '(':
-    #         k -= 1
-    #     elif config.Rules[rule_name][i] == ')':
-    #         k += 1
-    #     if k == 0:
-    #         config.Rules[rule_name].insert(i, bracket1)
-    #         print("in while1")
-    #         for i in config.Rules[rule_name]:
-    #             print(i["value"], end=' ')
-    #         print("\n")
-    #         break
-    #     i -= 1
-    # i = index + 2
-    # while i < len(config.Rules[rule_name]):
-    #     if config.Rules[rule_name][i] == '(':
-    #         k -= 1
-    #     elif config.Rules[rule_name][i] == ')':
-    #         k += 1
-    #     if k == 0:
-    #         if i+1 == len(config.Rules[rule_name]):
-    #             config.Rules[rule_name].append(bracket2)
-    #         else:
-    #             config.Rules[rule_name].insert(i+1, bracket2)
-    #         print("in while2")
-    #         for i in config.Rules[rule_name]:
-    #             print(i["value"], end=' ')
-    #         print("\n")
-    #         break
-    #     i += 1
-    # check_BRACKETS(rule_name)
-
 
 def check_BRACKETS(rule_name):
     lenght = len(config.Rules[rule_name])
