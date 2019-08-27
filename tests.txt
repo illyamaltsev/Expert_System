@@ -1,6 +1,6 @@
-A | B + C => E
+A | B + C + A => C + A => E
 (F | G) + H => E
 
 ?E
 
-=A
+=CA

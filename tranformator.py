@@ -23,7 +23,7 @@ def get_left_index(rule_name, index):
             k -= 1
         elif config.Rules[rule_name][index]["value"] == '(':
             k += 1
-        if k == 0 and config.Rules[rule_name][index]["type"] != 'operation' and config.Rules[rule_name][index - 1]["value"] != operation:
+        if k == 0:
             return index
         index -= 1
 
@@ -36,16 +36,17 @@ def get_right_index(rule_name, index):
             k -= 1
         elif config.Rules[rule_name][index]["value"] == '(':
             k += 1
-        if k == 0 and (config.Rules[rule_name][index]["type"] != 'operation' or config.Rules[rule_name][index]["value"] == "implies" or config.Rules[rule_name][index]["value"] == "if and only if") and config.Rules[rule_name][index + 1]["value"] != operation:
-            if config.Rules[rule_name][index]["type"] == 'operation':
-                return index
+        if k == 0:
             return index + 1
         index += 1
 
 #insert in index_left and index_right if there was not inserted yet
 def insert_brackets_index(rule_name, index_left, index_right):
-    if index_left and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and config.Rules[rule_name][index_right]["value"] != ")":
-        config.Rules[rule_name].insert(index_right, bracket2)
+    if index_left and index_right and config.Rules[rule_name][index_left - 1]["value"] != "(" and (index_right == len(config.Rules[rule_name]) or config.Rules[rule_name][index_right]["value"] != ")"):
+        if index_right == len(config.Rules[rule_name]):
+            config.Rules[rule_name].append(bracket2)
+        else:
+            config.Rules[rule_name].insert(index_right, bracket2)
         config.Rules[rule_name].insert(index_left, bracket1)
 
 def insert_brackets(rule_name):
@@ -420,15 +421,15 @@ def check_FINAL(rule_name):
 
 def calculate(rule_name):
     while True:
-        cur_len = len(config.Rules)
+        cur_len = len(config.Rules[rule_name])
         check_BRACKETS(rule_name)  # +
         check_AND(rule_name)  # + but only in left side
         check_OR(rule_name)  # +
         check_XOR(rule_name)  # +
         check_IMPLIES(rule_name)  # +-
-        # check_IFANDONLYIF(rule_name)  # +-
+        check_IFANDONLYIF(rule_name)  # +-
         rez = check_FINAL(rule_name)  # +-
-        if cur_len == len(config.Rules):
+        if cur_len == len(config.Rules[rule_name]):
             if rez:
                 del config.Rules[rule_name]
             return rez
