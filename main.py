@@ -36,7 +36,6 @@ def update_none_right():
     for rule_name in list(config.Rules.keys()):
         rule = config.Rules[rule_name]
         for i, elem in enumerate(rule):
-            print(elem)
             if elem["value"] == "implies":
                 while i < len(rule):
                     if rule[i]["type"] == "fact" and rule[i]["value"] not in right_Nones:
